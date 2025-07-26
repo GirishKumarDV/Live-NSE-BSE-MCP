@@ -1,0 +1,11 @@
+# MCP Server Dependencies
+mcp>=1.0.0
+
+# HTTP Client
+httpx>=0.25.0
+
+# HTTP Server
+aiohttp>=3.8.0
+
+# Type checking
+typing-extensions>=4.0.0 
