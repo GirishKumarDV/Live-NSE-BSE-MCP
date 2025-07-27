@@ -1,0 +1,8 @@
+# MCP Client Dependencies
+mcp>=1.0.0
+
+# HTTP Client for MCP over HTTP
+httpx>=0.25.0
+
+# Type checking and data classes
+typing-extensions>=4.0.0 
