@@ -416,20 +416,50 @@ class JSONRPCHandler:
         self.mcp_server = mcp_server
     
     async def handle_jsonrpc(self, request: Request) -> Response:
-        """Handle JSON-RPC request"""
+        """Handle JSON-RPC request with improved error handling for Dify compatibility"""
         try:
-            # Log request details for VSCode debugging
+            # Log request details for debugging
             logger.info(f"📥 Request from: {request.remote} - {request.method} {request.path}")
             logger.info(f"📥 User-Agent: {request.headers.get('User-Agent', 'unknown')}")
             
             # Parse JSON-RPC request
             data = await request.json()
-            logger.info(f"📥 JSON-RPC request: {data.get('method', 'unknown')} (id: {data.get('id')})")
+            logger.info(f"📥 JSON-RPC request: {data}")
             
-            # Handle different JSON-RPC methods
+            # Validate required JSON-RPC fields with better error handling
+            jsonrpc_version = data.get("jsonrpc")
+            if jsonrpc_version != "2.0":
+                logger.warning(f"Invalid JSON-RPC version: {jsonrpc_version}")
+                return self._create_error_response(
+                    {"code": -32600, "message": "Invalid Request - JSON-RPC version must be 2.0"},
+                    request_id=data.get("id")
+                )
+            
             method = data.get("method")
             params = data.get("params", {})
             request_id = data.get("id")
+            
+            # Handle missing method field (common issue with Dify)
+            if method is None:
+                # Check if this looks like a malformed notification/initialized
+                if "initialized" in str(data):
+                    logger.info("Detected malformed initialized notification, treating as valid")
+                    return self._create_success_response({}, request_id)
+                
+                logger.error(f"Missing method field in request: {data}")
+                return self._create_error_response(
+                    {"code": -32600, "message": "Invalid Request - method field is required"},
+                    request_id=request_id
+                )
+            
+            # Handle requests vs notifications
+            # A notification is a JSON-RPC message without an "id" field at all
+            is_notification = "id" not in data
+            
+            if is_notification:
+                logger.info(f"📥 JSON-RPC notification: {method}")
+            else:
+                logger.info(f"📥 JSON-RPC request: {method} (id: {request_id})")
             
             result = None
             error = None
@@ -467,6 +497,13 @@ class JSONRPCHandler:
                         result = {"content": clean_content}
                 
                 elif method == "initialize":
+                    # Enhanced initialization handling for Dify compatibility
+                    client_info = params.get("clientInfo", {})
+                    client_name = client_info.get("name", "unknown")
+                    client_version = client_info.get("version", "unknown")
+                    
+                    logger.info(f"Initializing connection from {client_name} v{client_version}")
+                    
                     result = {
                         "protocolVersion": "2024-11-05",
                         "capabilities": {
@@ -478,6 +515,16 @@ class JSONRPCHandler:
                         }
                     }
                 
+                elif method == "notifications/initialized":
+                    # Handle initialization complete notification
+                    logger.info("Client initialization completed")
+                    # For notifications, we don't send a response (per JSON-RPC spec)
+                    return Response(
+                        text="",
+                        status=202,  # Accepted
+                        headers=self._get_cors_headers()
+                    )
+                
                 elif method == "ping":
                     result = {}
                 
@@ -485,78 +532,87 @@ class JSONRPCHandler:
                     error = {"code": -32601, "message": f"Method not found: {method}"}
             
             except Exception as e:
-                logger.error(f"Error handling method {method}: {str(e)}")
+                logger.error(f"Error handling method {method}: {str(e)}", exc_info=True)
                 error = {"code": -32603, "message": f"Internal error: {str(e)}"}
             
+            # For notifications, don't send a response unless there's an error
+            if is_notification and not error:
+                return Response(
+                    text="",
+                    status=202,  # Accepted
+                    headers=self._get_cors_headers()
+                )
+            
             # Create JSON-RPC response
-            response_data = {
-                "jsonrpc": "2.0",
-                "id": request_id
-            }
-            
             if error:
-                response_data["error"] = error
-                logger.error(f"📤 JSON-RPC Error Response: {error}")
+                return self._create_error_response(error, request_id)
             else:
-                response_data["result"] = result
-                logger.info(f"📤 JSON-RPC Success Response for {method} (id: {request_id})")
-            
-            # Convert to JSON with proper formatting for VSCode
-            response_text = json.dumps(response_data, ensure_ascii=False, separators=(',', ':'))
-            
-            return Response(
-                text=response_text,
-                content_type="application/json",
-                charset="utf-8",
-                headers={
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Methods": "GET, POST, OPTIONS, PUT, DELETE",
-                    "Access-Control-Allow-Headers": "Content-Type, Authorization, x-api-key, x-requested-with",
-                    "Access-Control-Max-Age": "86400",
-                    "Cache-Control": "no-cache, no-store, must-revalidate",
-                    "Connection": "keep-alive"
-                }
-            )
+                return self._create_success_response(result, request_id)
         
         except json.JSONDecodeError as e:
             logger.error(f"📤 JSON Parse Error: {str(e)}")
-            error_response = {
-                "jsonrpc": "2.0",
-                "error": {"code": -32700, "message": "Parse error"},
-                "id": None
-            }
-            response_text = json.dumps(error_response)
-            return Response(
-                text=response_text,
-                content_type="application/json",
-                charset="utf-8",
-                status=400,
-                headers={
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Methods": "GET, POST, OPTIONS, PUT, DELETE",
-                    "Access-Control-Allow-Headers": "Content-Type, Authorization, x-api-key, x-requested-with"
-                }
+            return self._create_error_response(
+                {"code": -32700, "message": "Parse error"},
+                request_id=None,
+                status=400
             )
         
         except Exception as e:
             logger.error(f"📤 Unexpected error in JSON-RPC handler: {str(e)}", exc_info=True)
-            error_response = {
-                "jsonrpc": "2.0",
-                "error": {"code": -32603, "message": f"Internal error: {str(e)}"},
-                "id": data.get("id") if 'data' in locals() else None
-            }
-            response_text = json.dumps(error_response)
-            return Response(
-                text=response_text,
-                content_type="application/json",
-                charset="utf-8",
-                status=500,
-                headers={
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Methods": "GET, POST, OPTIONS, PUT, DELETE", 
-                    "Access-Control-Allow-Headers": "Content-Type, Authorization, x-api-key, x-requested-with"
-                }
+            request_id = data.get("id") if 'data' in locals() else None
+            return self._create_error_response(
+                {"code": -32603, "message": f"Internal error: {str(e)}"},
+                request_id=request_id,
+                status=500
             )
+
+    def _get_cors_headers(self) -> dict:
+        """Get CORS headers for responses"""
+        return {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, OPTIONS, PUT, DELETE",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization, x-api-key, x-requested-with",
+            "Access-Control-Max-Age": "86400",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Connection": "keep-alive"
+        }
+    
+    def _create_success_response(self, result: Any, request_id: Any) -> Response:
+        """Create a successful JSON-RPC response"""
+        response_data = {
+            "jsonrpc": "2.0",
+            "id": request_id,
+            "result": result
+        }
+        
+        logger.info(f"📤 JSON-RPC Success Response (id: {request_id})")
+        response_text = json.dumps(response_data, ensure_ascii=False, separators=(',', ':'))
+        
+        return Response(
+            text=response_text,
+            content_type="application/json",
+            charset="utf-8",
+            headers=self._get_cors_headers()
+        )
+    
+    def _create_error_response(self, error: dict, request_id: Any, status: int = 200) -> Response:
+        """Create an error JSON-RPC response"""
+        response_data = {
+            "jsonrpc": "2.0",
+            "id": request_id,
+            "error": error
+        }
+        
+        logger.error(f"📤 JSON-RPC Error Response: {error}")
+        response_text = json.dumps(response_data, ensure_ascii=False, separators=(',', ':'))
+        
+        return Response(
+            text=response_text,
+            content_type="application/json",
+            charset="utf-8",
+            status=status,
+            headers=self._get_cors_headers()
+        )
 
     async def handle_options(self, request: Request) -> Response:
         """Handle CORS preflight requests"""
