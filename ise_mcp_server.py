@@ -715,6 +715,15 @@ async def create_app() -> Application:
 async def main():
     """Main entry point for the HTTP server"""
     logger.info(f"Starting Indian Stock Exchange MCP HTTP Server...")
+    
+    # Validate configuration
+    try:
+        Config.validate_config()
+        logger.info(f"✅ Configuration validated successfully")
+    except ValueError as e:
+        logger.error(f"❌ Configuration error: {e}")
+        return
+    
     logger.info(f"Server will listen on {Config.HTTP_HOST}:{Config.HTTP_PORT}")
     
     # Create aiohttp application

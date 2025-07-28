@@ -22,8 +22,8 @@ class Config:
     # API Base URL - Replace with actual API URL
     BASE_URL: str = os.getenv("ISE_API_BASE_URL", "https://stock.indianapi.in/")
     
-    # API Key (if required)
-    API_KEY: str = os.getenv("ISE_API_KEY","sk-live-C6rewTUHqgJDuFeYOutcieJhvVwAQDxfUiXqvoXv")
+    # API Key - Must be provided via environment variable or .env file
+    API_KEY: Optional[str] = os.getenv("ISE_API_KEY")
     
     # Request timeout in seconds
     REQUEST_TIMEOUT: int = int(os.getenv("ISE_REQUEST_TIMEOUT", "30"))
@@ -49,4 +49,13 @@ class Config:
         if cls.API_KEY:
             headers["Authorization"] = f"Bearer {cls.API_KEY}"
         
-        return headers 
+        return headers
+    
+    @classmethod
+    def validate_config(cls) -> None:
+        """Validate that required configuration is present"""
+        if not cls.API_KEY:
+            raise ValueError(
+                "ISE_API_KEY environment variable is required. "
+                "Please set it in your .env file or environment variables."
+            ) 
