@@ -1,6 +1,6 @@
 # Indian Stock Exchange MCP Server
 
-This server provides access to live market data from Indian Stock Exchanges (BSE & NSE) through the Model Context Protocol (MCP).
+This server provides access to live market data from Indian Stock Exchanges (BSE & NSE) through the Model Context Protocol (MCP), powered by [IndianAPI](https://indianapi.in/).
 
 ## 🚀 Quick Start
 
@@ -8,6 +8,7 @@ This server provides access to live market data from Indian Stock Exchanges (BSE
 
 - Python 3.8+
 - pip (Python package installer)
+- **API Key from IndianAPI**: Sign up at [https://indianapi.in/](https://indianapi.in/) and obtain an API key for the Stock Market API
 
 ### Installation
 
@@ -24,17 +25,23 @@ This server provides access to live market data from Indian Stock Exchanges (BSE
    pip install -r requirements.txt
    ```
 
-3. **Configure environment variables**:
+3. **Get your API key**:
+   - Visit [https://indianapi.in/](https://indianapi.in/)
+   - Sign up for a free account
+   - Navigate to the Stock Market API section
+   - Subscribe to get your API key
+
+4. **Configure environment variables**:
 
    ```bash
    # Copy the example environment file
    cp .env.example .env
    
-   # Edit .env and add your API key
-   # ISE_API_KEY=your_actual_api_key_here
+   # Edit .env and add your IndianAPI key
+   # ISE_API_KEY=your_indianapi_key_here
    ```
 
-4. **Start the server**:
+5. **Start the server**:
 
    ```bash
    python ise_mcp_server.py
@@ -47,8 +54,8 @@ The server will start on `http://localhost:8000` by default.
 The server uses environment variables for configuration. Create a `.env` file in the project root with the following variables:
 
 ```bash
-# Required: API Key for Indian Stock Exchange API
-ISE_API_KEY=your_api_key_here
+# Required: API Key from IndianAPI (https://indianapi.in/)
+ISE_API_KEY=your_indianapi_key_here
 
 # Optional: API Base URL (default: https://stock.indianapi.in/)
 ISE_API_BASE_URL=https://stock.indianapi.in/
@@ -181,8 +188,8 @@ ISE_LOG_LEVEL=DEBUG
 
 ### Common Issues
 
-1. **Server won't start**: Check that your `ISE_API_KEY` is set in the `.env` file
-2. **API errors**: Verify your API key is valid and has sufficient quota
+1. **Server won't start**: Check that your `ISE_API_KEY` from [IndianAPI](https://indianapi.in/) is set in the `.env` file
+2. **API errors**: Verify your IndianAPI key is valid and has sufficient quota
 3. **Connection issues**: Ensure the server is running on the correct host/port
 4. **CORS errors**: The server includes CORS headers, but check your client configuration
 
@@ -215,6 +222,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🔗 Links
 
+- **IndianAPI Marketplace**: <https://indianapi.in/>
 - **Indian Stock API**: <https://stock.indianapi.in/>
 - **Model Context Protocol**: <https://modelcontextprotocol.io/>
 - **MCP Specification**: <https://spec.modelcontextprotocol.io/>
