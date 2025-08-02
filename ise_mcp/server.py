@@ -419,12 +419,12 @@ class JSONRPCHandler:
         """Handle JSON-RPC request with improved error handling for Dify compatibility"""
         try:
             # Log request details for debugging
-            logger.info(f"📥 Request from: {request.remote} - {request.method} {request.path}")
-            logger.info(f"📥 User-Agent: {request.headers.get('User-Agent', 'unknown')}")
+            logger.info(f"Request from: {request.remote} - {request.method} {request.path}")
+            logger.info(f"User-Agent: {request.headers.get('User-Agent', 'unknown')}")
             
             # Parse JSON-RPC request
             data = await request.json()
-            logger.info(f"📥 JSON-RPC request: {data}")
+            logger.info(f"JSON-RPC request: {data}")
             
             # Validate required JSON-RPC fields with better error handling
             jsonrpc_version = data.get("jsonrpc")
@@ -457,9 +457,9 @@ class JSONRPCHandler:
             is_notification = "id" not in data
             
             if is_notification:
-                logger.info(f"📥 JSON-RPC notification: {method}")
+                logger.info(f"JSON-RPC notification: {method}")
             else:
-                logger.info(f"📥 JSON-RPC request: {method} (id: {request_id})")
+                logger.info(f"JSON-RPC request: {method} (id: {request_id})")
             
             result = None
             error = None
@@ -570,7 +570,7 @@ class JSONRPCHandler:
         """Get CORS headers for responses"""
         return {
             "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET, POST, OPTIONS, PUT, DELETE",
+            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
             "Access-Control-Allow-Headers": "Content-Type, Authorization, x-api-key, x-requested-with",
             "Access-Control-Max-Age": "86400",
             "Cache-Control": "no-cache, no-store, must-revalidate",
@@ -621,7 +621,7 @@ class JSONRPCHandler:
             status=200,
             headers={
                 "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, POST, OPTIONS, PUT, DELETE",
+                "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
                 "Access-Control-Allow-Headers": "Content-Type, Authorization, x-api-key, x-requested-with",
                 "Access-Control-Max-Age": "86400",
                 "Content-Length": "0"
@@ -665,7 +665,7 @@ async def cors_middleware(request: Request, handler):
             status=200,
             headers={
                 "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, POST, OPTIONS, PUT, DELETE",
+                "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
                 "Access-Control-Allow-Headers": "Content-Type, Authorization, x-api-key, x-requested-with",
                 "Access-Control-Max-Age": "86400",
                 "Content-Length": "0"
@@ -678,7 +678,7 @@ async def cors_middleware(request: Request, handler):
         # Add CORS headers to response
         response.headers.update({
             "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET, POST, OPTIONS, PUT, DELETE",
+            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
             "Access-Control-Allow-Headers": "Content-Type, Authorization, x-api-key, x-requested-with",
         })
         return response
@@ -691,7 +691,7 @@ async def cors_middleware(request: Request, handler):
             content_type="application/json",
             headers={
                 "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, POST, OPTIONS, PUT, DELETE",
+                "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
                 "Access-Control-Allow-Headers": "Content-Type, Authorization, x-api-key, x-requested-with",
             }
         )

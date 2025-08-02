@@ -158,18 +158,19 @@ pip install -e .
 **Windows**: Edit `%APPDATA%\Claude\claude_desktop_config.json`
 **macOS**: Edit `~/Library/Application Support/Claude/claude_desktop_config.json`
 
-**Method 1: Using Direct Path (Recommended for now)**
+Choose one of the following configuration methods based on your setup:
 
-Since PyPI isn't available yet, use the direct path method:
+**Option 1: Using Virtual Environment Python (Most Reliable)**
 
-**Windows:**
+If you have a virtual environment with dependencies installed:
 
 ```json
 {
   "mcpServers": {
     "ise-mcp": {
-      "command": "Drive:\\path\\to\\repo\\ise-mcp-stdio.bat",
-      "cwd": "Drive:\\path\\to\\repo",
+      "command": "C:\\path\\to\\your\\project\\venv\\Scripts\\python.exe",
+      "args": ["-m", "ise_mcp.stdio_server"],
+      "cwd": "C:\\path\\to\\your\\project",
       "env": {
         "ISE_API_KEY": "your_indianapi_key_here"
       }
@@ -178,7 +179,7 @@ Since PyPI isn't available yet, use the direct path method:
 }
 ```
 
-**macOS/Linux:**
+**Option 2: Using PYTHONPATH (Recommended Fallback)**
 
 ```json
 {
@@ -186,24 +187,24 @@ Since PyPI isn't available yet, use the direct path method:
     "ise-mcp": {
       "command": "python",
       "args": ["-m", "ise_mcp.stdio_server"],
-      "cwd": "/path/to/your/Live-NSE-BSE-MCP",
+      "cwd": "C:\\path\\to\\your\\project",
       "env": {
-        "ISE_API_KEY": "your_indianapi_key_here"
+        "ISE_API_KEY": "your_indianapi_key_here",
+        "PYTHONPATH": "C:\\path\\to\\your\\project"
       }
     }
   }
 }
 ```
 
-**Method 2: Using Console Scripts (If Installed)**
-
-If you've installed the package with `pip install -e .` and the scripts are in your PATH:
+**Option 3: Using Batch Script (Windows)**
 
 ```json
 {
   "mcpServers": {
     "ise-mcp": {
-      "command": "ise-mcp-stdio",
+      "command": "C:\\path\\to\\your\\project\\ise-mcp-stdio.bat",
+      "cwd": "C:\\path\\to\\your\\project",
       "env": {
         "ISE_API_KEY": "your_indianapi_key_here"
       }
@@ -212,7 +213,72 @@ If you've installed the package with `pip install -e .` and the scripts are in y
 }
 ```
 
-**Note**: Replace `Drive:\\path\\to\\repo` with your actual project path (e.g., `D:\\Documents\\Github\\ise_mcp`).
+**Option 4: Direct File Execution**
+
+```json
+{
+  "mcpServers": {
+    "ise-mcp": {
+      "command": "python",
+      "args": ["ise_mcp/stdio_server.py"],
+      "cwd": "C:\\path\\to\\your\\project",
+      "env": {
+        "ISE_API_KEY": "your_indianapi_key_here",
+        "PYTHONPATH": "C:\\path\\to\\your\\project"
+      }
+    }
+  }
+}
+```
+
+**Option 5: Using PowerShell (if execution policies allow)**
+
+```json
+{
+  "mcpServers": {
+    "ise-mcp": {
+      "command": "powershell",
+      "args": ["-Command", "cd 'C:\\path\\to\\your\\project'; python -m ise_mcp.stdio_server"],
+      "env": {
+        "ISE_API_KEY": "your_indianapi_key_here"
+      }
+    }
+  }
+}
+```
+
+**Option 6: After Global Installation**
+
+If you've installed the package globally with `pip install -e .`:
+
+```json
+{
+  "mcpServers": {
+    "ise-mcp": {
+      "command": "python",
+      "args": ["-m", "ise_mcp.stdio_server"],
+      "env": {
+        "ISE_API_KEY": "your_indianapi_key_here"
+      }
+    }
+  }
+}
+```
+
+**macOS/Linux Equivalents:**
+
+For macOS/Linux, replace Windows paths with Unix-style paths:
+
+- `C:\\path\\to\\your\\project` becomes `/path/to/your/project`
+- `venv\\Scripts\\python.exe` becomes `venv/bin/python`
+- Use forward slashes `/` instead of backslashes `\\`
+
+**Notes:**
+
+- Replace `C:\\path\\to\\your\\project` with your actual project path
+- Replace `your_indianapi_key_here` with your actual API key from [IndianAPI](https://indianapi.in/)
+- Try options in order - **Option 1** (virtual environment) is most reliable
+- If one doesn't work, try the next option
 
 #### Step 3: Restart Claude Desktop
 
