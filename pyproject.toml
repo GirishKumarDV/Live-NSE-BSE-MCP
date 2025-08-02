@@ -1,0 +1,89 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ise-mcp-server"
+version = "1.0.0"
+description = "Indian Stock Exchange MCP Server - Access live market data from BSE & NSE through Model Context Protocol"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "GKDEV Team", email = "contact@gkdv.dev"}
+]
+maintainers = [
+    {name = "GKDEV Team", email = "gkdv19@gmail.com"}
+]
+keywords = ["indian", "stock", "exchange", "mcp", "model", "context", "protocol", "bse", "nse", "financial", "market", "data", "api"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Topic :: Office/Business :: Financial",
+    "Topic :: Office/Business :: Financial :: Investment",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "mcp>=1.0.0",
+    "httpx>=0.25.0",
+    "aiohttp>=3.8.0",
+    "typing-extensions>=4.0.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=22.0.0",
+    "flake8>=5.0.0",
+    "mypy>=1.0.0",
+]
+testing = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "httpx>=0.25.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/GirishKumarDV/Live-NSE-BSE-MCP"
+Repository = "https://github.com/GirishKumarDV/Live-NSE-BSE-MCP.git"
+Documentation = "https://github.com/GirishKumarDV/Live-NSE-BSE-MCP.git#readme"
+"Bug Reports" = "https://github.com/GirishKumarDV/Live-NSE-BSE-MCP/issues"
+"API Documentation" = "https://indianapi.in/"
+
+[project.scripts]
+ise-mcp-server = "ise_mcp.server:cli_main"
+ise-mcp-stdio = "ise_mcp.stdio_server:main"
+
+[tool.setuptools]
+packages = ["ise_mcp"]
+
+[tool.setuptools.package-data]
+ise_mcp = ["*.py"]
+
+[tool.black]
+line-length = 100
+target-version = ['py38']
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"] 

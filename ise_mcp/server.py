@@ -26,7 +26,7 @@ from mcp.types import (
 )
 import mcp.types as types
 
-from config import Config
+from .config import Config
 
 # Configure logging
 logging.basicConfig(
@@ -719,9 +719,9 @@ async def main():
     # Validate configuration
     try:
         Config.validate_config()
-        logger.info(f"✅ Configuration validated successfully")
+        logger.info(f"Configuration validated successfully")
     except ValueError as e:
-        logger.error(f"❌ Configuration error: {e}")
+        logger.error(f"Configuration error: {e}")
         return
     
     logger.info(f"Server will listen on {Config.HTTP_HOST}:{Config.HTTP_PORT}")
@@ -736,11 +736,11 @@ async def main():
     site = web.TCPSite(runner, Config.HTTP_HOST, Config.HTTP_PORT)
     await site.start()
     
-    logger.info(f"✅ Server started successfully!")
-    logger.info(f"🌐 JSON-RPC endpoint: http://{Config.HTTP_HOST}:{Config.HTTP_PORT}/jsonrpc")
-    logger.info(f"📊 Server info: http://{Config.HTTP_HOST}:{Config.HTTP_PORT}/info")
-    logger.info(f"❤️  Health check: http://{Config.HTTP_HOST}:{Config.HTTP_PORT}/health")
-    logger.info(f"📚 API Base URL: {Config.BASE_URL}")
+    logger.info(f"Server started successfully!")
+    logger.info(f"JSON-RPC endpoint: http://{Config.HTTP_HOST}:{Config.HTTP_PORT}/jsonrpc")
+    logger.info(f"Server info: http://{Config.HTTP_HOST}:{Config.HTTP_PORT}/info")
+    logger.info(f" Health check: http://{Config.HTTP_HOST}:{Config.HTTP_PORT}/health")
+    logger.info(f"API Base URL: {Config.BASE_URL}")
     
     # Connection help for different clients
     logger.info(f"🔗 Client Connection URLs:")
@@ -753,16 +753,20 @@ async def main():
         while True:
             await asyncio.sleep(1)
     except KeyboardInterrupt:
-        logger.info("🛑 Shutting down server...")
+        logger.info("Shutting down server...")
     finally:
         await runner.cleanup()
         await ise_client.close()
 
-if __name__ == "__main__":
+def cli_main():
+    """Synchronous entry point for console script"""
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
         logger.info("Server stopped.")
     except Exception as e:
         logger.error(f"Server error: {e}")
-        asyncio.run(ise_client.close()) 
+
+
+if __name__ == "__main__":
+    cli_main() 

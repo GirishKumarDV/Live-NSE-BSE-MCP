@@ -12,42 +12,110 @@ This server provides access to live market data from Indian Stock Exchanges (BSE
 
 ### Installation
 
-1. **Clone the repository**:
+> **Note**: This package is not yet published to PyPI. Please use source installation for now.
 
-   ```bash
-   git clone <repository-url>
-   cd ise_mcp
-   ```
+#### Option 1: Quick Install from Source (Recommended)
 
-2. **Install dependencies**:
+```bash
+git clone https://github.com/GirishKumarDV/Live-NSE-BSE-MCP.git
+cd Live-NSE-BSE-MCP
+pip install -e .
+```
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+#### Option 2: Development Installation
 
-3. **Get your API key**:
+```bash
+git clone https://github.com/GirishKumarDV/Live-NSE-BSE-MCP.git
+cd Live-NSE-BSE-MCP
+pip install -r requirements.txt
+pip install -e .
+```
+
+#### Option 3: Manual Execution (No Installation)
+
+If you prefer not to install the package:
+
+```bash
+git clone https://github.com/GirishKumarDV/Live-NSE-BSE-MCP.git
+cd Live-NSE-BSE-MCP
+pip install -r requirements.txt
+# Run directly with: python -m ise_mcp.server
+```
+
+**Important**: Since the package isn't on PyPI yet, use module execution (`python -m ise_mcp.server`) or install from source for the console scripts to work.
+
+### Configuration
+
+1. **Get your API key**:
    - Visit [https://indianapi.in/](https://indianapi.in/)
    - Sign up for a free account
    - Navigate to the Stock Market API section
    - Subscribe to get your API key
 
-4. **Configure environment variables**:
+2. **Configure environment variables**:
 
    ```bash
    # Copy the example environment file
-   cp .env.example .env
+   cp env.example .env
    
    # Edit .env and add your IndianAPI key
    # ISE_API_KEY=your_indianapi_key_here
    ```
 
-5. **Start the server**:
+### Usage
 
-   ```bash
-   python ise_mcp_server.py
-   ```
+#### HTTP Server Mode (for web clients like Cursor, VSCode, Dify)
+
+After installation, you can run the server in several ways:
+
+**Method 1: Module Execution (Recommended)**
+
+```bash
+# From the project root directory
+python -m ise_mcp.server
+```
+
+**Method 2: Using Batch Script (Windows)**
+
+```bash
+# Use the provided batch script (note the .\ prefix for PowerShell)
+.\ise-mcp-server.bat
+
+# Or with environment variables
+$env:ISE_HTTP_PORT=9000; .\ise-mcp-server.bat
+```
+
+**Method 3: Development Mode**
+
+```bash
+# If not installed, run as module from parent directory
+cd ..
+python -m ise_mcp.server
+```
+
+**Note**: Console scripts from PyPI (`ise-mcp-server`) are not available yet. Use module execution or the batch script instead.
 
 The server will start on `http://localhost:8000` by default.
+
+#### Stdio Mode (for direct MCP clients like Claude Desktop)
+
+**Method 1: Module Execution (Recommended)**
+
+```bash
+# From the project root directory
+python -m ise_mcp.stdio_server
+```
+
+**Method 2: Using Batch Script (Windows)**
+
+```bash
+# Use the existing batch script (note the .\ prefix for PowerShell)
+.\ise-mcp-stdio.bat
+```
+
+**Note**: Console scripts from PyPI (`ise-mcp-stdio`) are not available yet. Use module execution or the batch script instead.
+
+**Important**: Do NOT run the server files directly (e.g., `python server.py`) as this will cause import errors. Always use the console scripts or module execution.
 
 ## 🔧 Configuration
 
@@ -69,19 +137,222 @@ ISE_LOG_LEVEL=INFO
 
 **Important**: The `ISE_API_KEY` is required and the server will not start without it. Make sure to add your `.env` file to `.gitignore` to prevent committing sensitive information.
 
-## 🌐 Client Connections
+## 🌐 Client Integrations
 
-### Using with Cursor/VSCode
+### Claude Desktop Integration
+
+Claude Desktop uses the stdio transport for direct MCP communication.
+
+#### Step 1: Install the Server
+
+Since the package isn't on PyPI yet, install from source:
+
+```bash
+git clone https://github.com/GirishKumarDV/Live-NSE-BSE-MCP.git
+cd Live-NSE-BSE-MCP
+pip install -e .
+```
+
+#### Step 2: Configure Claude Desktop
+
+**Windows**: Edit `%APPDATA%\Claude\claude_desktop_config.json`
+**macOS**: Edit `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+**Method 1: Using Direct Path (Recommended for now)**
+
+Since PyPI isn't available yet, use the direct path method:
+
+**Windows:**
+
+```json
+{
+  "mcpServers": {
+    "ise-mcp": {
+      "command": "Drive:\\path\\to\\repo\\ise-mcp-stdio.bat",
+      "cwd": "Drive:\\path\\to\\repo",
+      "env": {
+        "ISE_API_KEY": "your_indianapi_key_here"
+      }
+    }
+  }
+}
+```
+
+**macOS/Linux:**
+
+```json
+{
+  "mcpServers": {
+    "ise-mcp": {
+      "command": "python",
+      "args": ["-m", "ise_mcp.stdio_server"],
+      "cwd": "/path/to/your/Live-NSE-BSE-MCP",
+      "env": {
+        "ISE_API_KEY": "your_indianapi_key_here"
+      }
+    }
+  }
+}
+```
+
+**Method 2: Using Console Scripts (If Installed)**
+
+If you've installed the package with `pip install -e .` and the scripts are in your PATH:
+
+```json
+{
+  "mcpServers": {
+    "ise-mcp": {
+      "command": "ise-mcp-stdio",
+      "env": {
+        "ISE_API_KEY": "your_indianapi_key_here"
+      }
+    }
+  }
+}
+```
+
+**Note**: Replace `Drive:\\path\\to\\repo` with your actual project path (e.g., `D:\\Documents\\Github\\ise_mcp`).
+
+#### Step 3: Restart Claude Desktop
+
+After saving the configuration, restart Claude Desktop. You should see the ISE MCP tools available in your chat.
+
+#### Testing Claude Integration
+
+Once configured, you can ask Claude:
+
+- "Show me trending stocks in the Indian market"
+- "Get me data for Reliance Industries"
+- "What are the top gainers today?"
+
+### VSCode Integration
+
+VSCode can use the HTTP transport to connect to the MCP server.
+
+#### Step 1: Install MCP Extension
+
+Install an MCP-compatible extension in VSCode or use the built-in MCP support if available.
+
+#### Step 2: Start the HTTP Server
+
+Clone and setup the server first:
+
+```bash
+# Clone the repository
+git clone https://github.com/GirishKumarDV/Live-NSE-BSE-MCP.git
+cd Live-NSE-BSE-MCP
+
+# Install dependencies  
+pip install -r requirements.txt
+
+# Start the server
+python -m ise_mcp.server
+```
+
+#### Step 3: Configure VSCode
+
+Add to your VSCode settings.json:
+
+```json
+{
+  "mcp.servers": {
+    "ise-mcp": {
+      "url": "http://localhost:8000/jsonrpc",
+      "type": "http"
+    }
+  }
+}
+```
+
+#### Step 4: Set Environment Variables
+
+Ensure your `ISE_API_KEY` is set:
+
+```bash
+# In your terminal before starting VSCode
+export ISE_API_KEY=your_indianapi_key_here
+code .
+```
+
+### Cursor Integration
+
+Cursor supports MCP through HTTP transport.
+
+#### Step 1: Start the HTTP Server
+
+Clone and setup the server first:
+
+```bash
+# Clone the repository
+git clone https://github.com/GirishKumarDV/Live-NSE-BSE-MCP.git
+cd Live-NSE-BSE-MCP
+
+# Install dependencies  
+pip install -r requirements.txt
+
+# Start the server
+python -m ise_mcp.server
+```
+
+#### Step 2: Configure Cursor
+
+In Cursor, go to Settings → Extensions → MCP and add:
+
+- **Server URL**: `http://localhost:8000/jsonrpc`
+- **Server Type**: HTTP JSON-RPC
+
+#### Step 3: Environment Setup
+
+Make sure your API key is configured in your `.env` file:
+
+```bash
+ISE_API_KEY=your_indianapi_key_here
+```
+
+#### Testing Cursor Integration
+
+You can now ask Cursor's AI:
+
+- "Use the ISE MCP to get stock data for TCS"
+- "Show me the most active stocks on NSE"
+
+### Other MCP Clients
+
+#### HTTP Transport (Web Clients)
+
+For any HTTP-based MCP client:
 
 - **URL**: `http://localhost:8000/jsonrpc`
-- **Type**: HTTP JSON-RPC
+- **Type**: HTTP JSON-RPC 2.0
+- **Content-Type**: `application/json`
 
-### Using with Dify
+#### Stdio Transport (Command Line)
+
+For stdio-based MCP clients:
+
+```bash
+# Clone and setup first
+git clone https://github.com/GirishKumarDV/Live-NSE-BSE-MCP.git
+cd Live-NSE-BSE-MCP
+pip install -r requirements.txt
+
+# Direct stdio connection
+python -m ise_mcp.stdio_server
+
+# Or with environment variables
+ISE_API_KEY=your_key python -m ise_mcp.stdio_server
+```
+
+### Dify Integration
+
+Dify can connect using HTTP transport:
 
 - **URL**: `http://localhost:8000/jsonrpc`
 - **Type**: MCP over HTTP
+- **Headers**: `Content-Type: application/json`
 
-## 📊 Available Tools
+## Available Tools
 
 The server provides the following tools for accessing Indian stock market data:
 
@@ -160,13 +431,88 @@ POST http://localhost:8000/jsonrpc
 }
 ```
 
-## 🛠️ Development
+## 🛠️ Development & Testing
 
 ### Running Tests
 
+The project includes several test files for different aspects of functionality:
+
+#### 1. Tool Testing
+
 ```bash
-python test_tools.py
-python test_connection.py
+# Test individual MCP tools functionality
+python tests/test_tools.py
+```
+
+#### 2. Connection Testing
+
+```bash
+# Test basic HTTP connections and API responses
+python tests/test_connection.py
+```
+
+#### 3. Clean Tools Testing
+
+```bash
+# Test tool validation and clean responses
+python tests/test_clean_tools.py
+```
+
+#### 4. VSCode Integration Testing
+
+```bash
+# Test VSCode MCP integration
+python tests/test_vscode_connection.py
+```
+
+#### 5. Run All Tests
+
+```bash
+# If you have pytest installed (recommended)
+pytest tests/
+
+# Or run all test files manually
+python tests/test_tools.py && python tests/test_connection.py && python tests/test_clean_tools.py && python tests/test_vscode_connection.py
+```
+
+### Testing with Different Clients
+
+#### Testing with curl
+
+```bash
+# Start the HTTP server
+python -m ise_mcp.server
+
+# Test health endpoint
+curl http://localhost:8000/health
+
+# Test server info
+curl http://localhost:8000/info
+
+# Test MCP tool call
+curl -X POST http://localhost:8000/jsonrpc \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "get_trending_stocks",
+      "arguments": {}
+    },
+    "id": 1
+  }'
+```
+
+#### Testing with Python Client
+
+```bash
+# Use the included Python client
+cd client
+python simple_mcp_client.py
+
+# Or run the basic usage example
+cd examples
+python basic_usage.py
 ```
 
 ### Debug Mode
@@ -177,6 +523,38 @@ Set the log level to DEBUG in your `.env` file:
 ISE_LOG_LEVEL=DEBUG
 ```
 
+### Development Workflow
+
+1. **Setup Development Environment**:
+
+   ```bash
+   git clone https://github.com/GirishKumarDV/Live-NSE-BSE-MCP.git
+   cd Live-NSE-BSE-MCP
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   pip install -e .
+   ```
+
+2. **Create Configuration**:
+
+   ```bash
+   cp env.example .env
+   # Edit .env and add your API key
+   ```
+
+3. **Run Tests**:
+
+   ```bash
+   python tests/test_tools.py
+   ```
+
+4. **Start Development Server**:
+
+   ```bash
+   python -m ise_mcp.server
+   ```
+
 ## 🔒 Security
 
 - **Environment Variables**: All sensitive configuration is stored in environment variables
@@ -184,14 +562,104 @@ ISE_LOG_LEVEL=DEBUG
 - **CORS**: Proper CORS headers are set for cross-origin requests
 - **Input Validation**: All tool inputs are validated against JSON schemas
 
+## 📦 Publishing to PyPI
+
+> **Current Status**: This package is not yet published to PyPI. Users must install from source.
+
+Users should install from source using the methods described in the [Installation](#installation) section.
+
+### Development Installation
+
+```bash
+# Clone and install in development mode
+git clone https://github.com/GirishKumarDV/Live-NSE-BSE-MCP.git
+cd Live-NSE-BSE-MCP
+pip install -e ".[dev]"
+
+# Run tests
+pytest tests/
+
+# Format code
+black .
+
+# Type check
+mypy ise_mcp/
+```
+
 ## 🐛 Troubleshooting
 
 ### Common Issues
 
-1. **Server won't start**: Check that your `ISE_API_KEY` from [IndianAPI](https://indianapi.in/) is set in the `.env` file
-2. **API errors**: Verify your IndianAPI key is valid and has sufficient quota
-3. **Connection issues**: Ensure the server is running on the correct host/port
-4. **CORS errors**: The server includes CORS headers, but check your client configuration
+1. **Relative Import Error** (`attempted relative import with no known parent package`):
+   - **Problem**: Running `python server.py` or `python stdio_server.py` directly
+   - **Solution**: Use module execution (`python -m ise_mcp.server`, `python -m ise_mcp.stdio_server`) or install from source with `pip install -e .`
+
+2. **Server won't start**:
+   - Check that your `ISE_API_KEY` from [IndianAPI](https://indianapi.in/) is set in the `.env` file
+   - Verify the API key is valid and not expired
+
+3. **API errors**:
+   - Verify your IndianAPI key is valid and has sufficient quota
+   - Check if you've subscribed to the Stock Market API on IndianAPI
+
+4. **Connection issues**:
+   - Ensure the server is running on the correct host/port
+   - Check if port 8000 is available
+   - Verify firewall settings
+
+5. **CORS errors**:
+   - The server includes CORS headers, but check your client configuration
+   - Ensure you're making requests to the correct endpoint
+
+6. **Module not found**:
+   - Ensure you've installed the package with `pip install -e .` from the project directory
+   - Check if virtual environment is activated
+   - Note: PyPI installation (`pip install ise-mcp-server`) is not available yet
+
+7. **Import errors**:
+   - Check Python version compatibility (requires Python 3.8+)
+   - Ensure all dependencies are installed: `pip install -r requirements.txt`
+
+### Installation Issues
+
+#### Error: `No module named 'ise_mcp'`
+
+```bash
+# Solution 1: Install the package
+pip install -e .
+
+# Solution 2: Run from correct directory
+cd /path/to/Live-NSE-BSE-MCP
+python -m ise_mcp.server
+```
+
+#### Error: `ModuleNotFoundError: No module named 'mcp'`
+
+```bash
+# Install MCP dependency
+pip install mcp>=1.0.0
+
+# Or install all requirements
+pip install -r requirements.txt
+```
+
+### Client Integration Issues
+
+#### Claude Desktop Not Detecting Server
+
+1. Check configuration file location:
+   - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+   - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+2. Verify JSON syntax is valid
+3. Restart Claude Desktop completely
+4. Check console logs for error messages
+
+#### VSCode/Cursor Connection Issues
+
+1. Ensure HTTP server is running: `python -m ise_mcp.server`
+2. Test server health: `curl http://localhost:8000/health`
+3. Check if MCP extension is properly installed
+4. Verify environment variables are set
 
 ### Error Handling
 
@@ -202,11 +670,54 @@ The server provides detailed error messages in JSON-RPC format:
 - `-32602`: Invalid params
 - `-32603`: Internal error
 
+### Transport-Specific Issues
+
+#### HTTP Transport
+
+- Check if port 8000 is available: `netstat -an | grep 8000`
+- Verify firewall settings
+- Test with `curl http://localhost:8000/health`
+- Check server logs for error messages
+
+#### Stdio Transport
+
+- Ensure no other output to stdout
+- Check that environment variables are set
+- Verify MCP client configuration
+- Test stdio connection: `echo '{"jsonrpc":"2.0","method":"ping","id":1}' | python -m ise_mcp.stdio_server`
+
+### Development Issues
+
+#### Tests Failing
+
+```bash
+# Check if server is running
+curl http://localhost:8000/health
+
+# Verify API key is set
+echo $ISE_API_KEY
+
+# Run individual tests
+python tests/test_connection.py
+python tests/test_tools.py
+```
+
+#### Debugging Server Issues
+
+1. Enable debug logging in `.env`:
+
+   ```bash
+   ISE_LOG_LEVEL=DEBUG
+   ```
+
+2. Check server logs for detailed error information
+3. Test API endpoints manually with curl
+4. Verify IndianAPI service status
+
 ## 📚 Related Projects
 
 - **MCP Client**: [client/](./client/) - Python client for testing
 - **Examples**: [examples/](./examples/) - Usage examples
-- **Gemini Advisor**: [gemini_financial_advisor.py](./gemini_financial_advisor.py) - AI-powered financial analysis
 
 ## 🤝 Contributing
 
@@ -228,5 +739,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - **MCP Specification**: <https://spec.modelcontextprotocol.io/>
 
 ---
-
-Made with ❤️ for the Indian Stock Market community

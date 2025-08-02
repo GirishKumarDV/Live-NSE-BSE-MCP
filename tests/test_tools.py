@@ -18,14 +18,14 @@ try:
         result = response.json()
         if "result" in result:
             tools = result["result"].get("tools", [])
-            print(f"✅ Found {len(tools)} tools:")
+            print(f"Found {len(tools)} tools:")
             for i, tool in enumerate(tools, 1):
                 print(f"  {i}. {tool['name']}")
         else:
-            print(f"❌ Error: {result}")
+            print(f"Error: {result}")
     else:
-        print(f"❌ HTTP Error: {response.status_code}")
+        print(f"HTTP Error: {response.status_code}")
         
 except Exception as e:
-    print(f"❌ Connection error: {e}")
+    print(f"Connection error: {e}")
     print("Make sure the server is running with: python ise_mcp_server.py") 

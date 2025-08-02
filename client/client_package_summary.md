@@ -41,7 +41,7 @@ ise_mcp/
 
 ## 🚀 Key Features
 
-### ✅ **Easy to Use**
+### **Easy to Use**
 
 ```python
 # Simple as this!
@@ -50,7 +50,7 @@ await client.connect()
 trending = await client.get_trending_stocks()
 ```
 
-### ✅ **All 14 Tools Supported**
+### **All 14 Tools Supported**
 
 ```python
 # Market data
@@ -77,7 +77,7 @@ await client.get_mutual_funds()
 await client.get_commodities()
 ```
 
-### ✅ **Generic MCP Support**
+### **Generic MCP Support**
 
 ```python
 # Works with any MCP server
@@ -86,14 +86,14 @@ tools = await client.list_tools()
 result = await client.call_tool("any_tool_name", {"arg": "value"})
 ```
 
-### ✅ **Type Safety & Error Handling**
+### **Type Safety & Error Handling**
 
 - Full type hints throughout
 - Proper exception handling
 - Connection state management
 - Async/await support
 
-### ✅ **Comprehensive Examples**
+### **Comprehensive Examples**
 
 Interactive examples covering:
 
@@ -106,12 +106,12 @@ Interactive examples covering:
 
 ## 📈 Tested & Working
 
-✅ **Successfully connects** to your ISE MCP server  
-✅ **All 14 tools** working correctly  
-✅ **Error handling** properly implemented  
-✅ **Type safety** with full hints  
-✅ **Documentation** comprehensive  
-✅ **Examples** tested and working  
+**Successfully connects** to your ISE MCP server  
+**All 14 tools** working correctly  
+**Error handling** properly implemented  
+**Type safety** with full hints  
+**Documentation** comprehensive  
+**Examples** tested and working  
 
 ## 🎯 Usage Scenarios
 
@@ -251,7 +251,7 @@ asyncio.run(main())
 - **Real-time data** access
 - **Historical analysis** capabilities
 
-## 📊 Performance
+## Performance
 
 - **Async/await** for non-blocking operations
 - **Connection pooling** via httpx

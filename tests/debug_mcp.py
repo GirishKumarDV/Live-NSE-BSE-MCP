@@ -93,11 +93,11 @@ def test_mcp_flow():
         if response.status_code == 200:
             result = response.json()
             if "result" in result:
-                print("✅ Tool call successful")
+                print("Tool call successful")
                 content = result["result"].get("content", [])
                 print(f"Content items: {len(content)}")
             else:
-                print(f"❌ Tool call failed: {result}")
+                print(f"Tool call failed: {result}")
         else:
             print(f"HTTP Error: {response.text}")
     except Exception as e:

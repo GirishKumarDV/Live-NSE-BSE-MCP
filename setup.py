@@ -3,96 +3,76 @@
 Setup script for Indian Stock Exchange MCP Server
 """
 
+from setuptools import setup, find_packages
 import os
-import sys
 from pathlib import Path
 
-def create_env_file():
-    """Create environment configuration file"""
-    env_content = """# Indian Stock Exchange MCP Server Configuration
-# Update with your actual values
+# Read the contents of README file
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text(encoding='utf-8')
 
-# API Configuration
-ISE_API_BASE_URL=https://stock.indianapi.in/
-ISE_API_KEY=sk-live-C6rewTUHqgJDuFeYOutcieJhvVwAQDxfUiXqvoXv
+# Read requirements from requirements.txt
+requirements = []
+if os.path.exists('requirements.txt'):
+    with open('requirements.txt', 'r') as f:
+        requirements = [line.strip() for line in f if line.strip() and not line.startswith('#')]
 
-# Server Configuration
-ISE_REQUEST_TIMEOUT=30
-ISE_LOG_LEVEL=INFO
-
-# Example configurations for different environments:
-
-# Development
-# ISE_LOG_LEVEL=DEBUG
-# ISE_REQUEST_TIMEOUT=60
-
-# Production
-# ISE_LOG_LEVEL=WARNING
-# ISE_REQUEST_TIMEOUT=30
-"""
-    
-    env_file = Path(".env")
-    if not env_file.exists():
-        with open(env_file, "w") as f:
-            f.write(env_content)
-        print("✅ Created .env file")
-        print("📝 Please update .env with your actual API URL and credentials")
-    else:
-        print("⚠️  .env file already exists")
-
-def check_python_version():
-    """Check if Python version is compatible"""
-    if sys.version_info < (3, 8):
-        print("❌ Python 3.8 or higher is required")
-        sys.exit(1)
-    else:
-        print(f"✅ Python {sys.version.split()[0]} detected")
-
-def install_dependencies():
-    """Install required dependencies"""
-    try:
-        import subprocess
-        print("📦 Installing dependencies...")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
-        print("✅ Dependencies installed successfully")
-    except subprocess.CalledProcessError:
-        print("❌ Failed to install dependencies")
-        print("💡 Try running: pip install -r requirements.txt")
-
-def print_next_steps():
-    """Print next steps for the user"""
-    print("\n🎉 Setup Complete!")
-    print("=" * 40)
-    print("\n📋 Next Steps:")
-    print("1. Update .env file with your actual API URL")
-    print("2. Set your API key if required")
-    print("3. Run the demo: python demo.py")
-    print("4. Start the server: python ise_mcp_server.py")
-    print("\n📚 Documentation:")
-    print("- Read README.md for detailed instructions")
-    print("- Check demo.py for usage examples")
-    print("\n💡 Configuration:")
-    print("- API URL: Update ISE_API_BASE_URL in .env")
-    print("- API Key: Update ISE_API_KEY in .env (if needed)")
-    print("- Timeout: Adjust ISE_REQUEST_TIMEOUT if needed")
-
-def main():
-    """Main setup function"""
-    print("🇮🇳 Indian Stock Exchange MCP Server Setup")
-    print("=" * 50)
-    print()
-    
-    # Check Python version
-    check_python_version()
-    
-    # Create environment file
-    create_env_file()
-    
-    # Install dependencies
-    install_dependencies()
-    
-    # Print next steps
-    print_next_steps()
-
-if __name__ == "__main__":
-    main() 
+setup(
+    name="ise-mcp-server",
+    version="1.0.0",
+    author="Girish Kumar D V",
+    author_email="girishdivate@gkdv.dev",
+    description="Indian Stock Exchange MCP Server - Access live market data from BSE & NSE through Model Context Protocol",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/GirishKumarDV/Live-NSE-BSE-MCP.git",
+    packages=find_packages(),
+    classifiers=[
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Financial and Insurance Industry",
+        "Topic :: Office/Business :: Financial",
+        "Topic :: Office/Business :: Financial :: Investment",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Operating System :: OS Independent",
+    ],
+    python_requires=">=3.8",
+    install_requires=requirements,
+    extras_require={
+        "dev": [
+            "pytest>=7.0.0",
+            "pytest-asyncio>=0.21.0",
+            "black>=22.0.0",
+            "flake8>=5.0.0",
+            "mypy>=1.0.0",
+        ],
+        "testing": [
+            "pytest>=7.0.0",
+            "pytest-asyncio>=0.21.0",
+            "httpx>=0.25.0",
+        ]
+    },
+    entry_points={
+        "console_scripts": [
+            "ise-mcp-server=ise_mcp.server:cli_main",
+            "ise-mcp-stdio=ise_mcp.stdio_server:main",
+        ],
+    },
+    keywords="indian stock exchange mcp model context protocol bse nse financial market data api",
+    project_urls={
+        "Bug Reports": "https://github.com/GirishKumarDV/Live-NSE-BSE-MCP/issues",
+        "Source": "https://github.com/GirishKumarDV/Live-NSE-BSE-MCP.git",
+        "Documentation": "https://github.com/GirishKumarDV/Live-NSE-BSE-MCP#readme",
+        "API Documentation": "https://indianapi.in/",
+    },
+    include_package_data=True,
+    zip_safe=False,
+) 

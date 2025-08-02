@@ -149,12 +149,12 @@ async def market_dashboard():
     
     try:
         # Connect
-        print("🔌 Connecting to ISE MCP Server...")
+        print("Connecting to ISE MCP Server...")
         await client.connect()
         
         # Server info
         info = client.get_server_info()
-        print(f"📊 Connected to: {info.get('name')} v{info.get('version')}")
+        print(f"Connected to: {info.get('name')} v{info.get('version')}")
         
         # Market overview
         print("\n📈 Market Overview:")
@@ -175,7 +175,7 @@ async def market_dashboard():
                 print(f"   • {stock['company_name']}: {stock['percent_change']}%")
         
         # Most active stocks
-        print("\n📊 NSE Most Active:")
+        print("\nNSE Most Active:")
         nse_active = await client.get_nse_most_active()
         if nse_active:
             data = json.loads(nse_active)
@@ -195,10 +195,10 @@ async def market_dashboard():
         print("\n📈 Reliance Analysis:")
         reliance = await client.get_stock_data("Reliance")
         if reliance:
-            print("   ✅ Detailed data retrieved")
+            print("   Detailed data retrieved")
         
         # Historical analysis
-        print("\n📚 TCS Historical Performance:")
+        print("\nTCS Historical Performance:")
         tcs_history = await client.get_historical_stats("TCS", "quarter_results")
         if tcs_history:
             data = json.loads(tcs_history)
@@ -207,10 +207,10 @@ async def market_dashboard():
                 sales = data["Sales"][recent_quarter]
                 print(f"   Latest Quarter ({recent_quarter}): ₹{sales} Cr Sales")
         
-        print("\n✅ Market dashboard completed!")
+        print("\nMarket dashboard completed!")
         
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
     
     finally:
         await client.close()

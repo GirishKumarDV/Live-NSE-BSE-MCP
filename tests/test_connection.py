@@ -73,11 +73,11 @@ def test_cors_and_connection():
         if init_response.status_code == 200:
             result = init_response.json()
             if "result" in result:
-                print("   ✅ Initialize successful!")
+                print("   Initialize successful!")
                 server_info = result["result"].get("serverInfo", {})
                 print(f"   Server: {server_info.get('name')} v{server_info.get('version')}")
             else:
-                print(f"   ❌ Initialize failed: {result}")
+                print(f"   Initialize failed: {result}")
         
         # 4. Test tools/list
         print("\n4. Testing Tools List...")
@@ -103,16 +103,16 @@ def test_cors_and_connection():
             result = tools_response.json()
             if "result" in result:
                 tools = result["result"].get("tools", [])
-                print(f"   ✅ Found {len(tools)} tools!")
+                print(f"   Found {len(tools)} tools!")
                 print(f"   Sample tools: {[t['name'] for t in tools[:3]]}")
             else:
-                print(f"   ❌ Error: {result}")
+                print(f"   Error: {result}")
         
         print("\n🎉 Connection Test Summary:")
-        print("✅ CORS headers properly configured")
-        print("✅ Server responding to external clients")
-        print("✅ JSON-RPC protocol working")
-        print(f"✅ {len(tools) if 'tools' in locals() else 'Unknown'} tools available")
+        print("CORS headers properly configured")
+        print("Server responding to external clients")
+        print("JSON-RPC protocol working")
+        print(f"{len(tools) if 'tools' in locals() else 'Unknown'} tools available")
         
         print(f"\n📋 For VSCode MCP Configuration:")
         print(f"   URL: http://localhost:8000/jsonrpc")
@@ -120,10 +120,10 @@ def test_cors_and_connection():
         print(f"   Protocol: JSON-RPC 2.0")
         
     except requests.exceptions.ConnectionError:
-        print("❌ Connection failed - make sure server is running:")
+        print("Connection failed - make sure server is running:")
         print("   python ise_mcp_server.py")
     except Exception as e:
-        print(f"❌ Test failed: {e}")
+        print(f"Test failed: {e}")
 
 if __name__ == "__main__":
     test_cors_and_connection() 

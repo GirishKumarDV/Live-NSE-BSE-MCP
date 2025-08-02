@@ -104,11 +104,11 @@ class SimpleMCPClient:
                 self.tools.append(tool)
             
             self.connected = True
-            logger.info(f"✅ Connected to {self.server_info.get('name', 'Unknown')} - {len(self.tools)} tools")
+            logger.info(f"Connected to {self.server_info.get('name', 'Unknown')} - {len(self.tools)} tools")
             return True
             
         except Exception as e:
-            logger.error(f"❌ Connection failed: {e}")
+            logger.error(f"Connection failed: {e}")
             return False
     
     async def list_tools(self) -> List[Tool]:
@@ -237,12 +237,12 @@ async def demo():
     try:
         # Connect
         if not await client.connect():
-            print("❌ Failed to connect")
+            print("Failed to connect")
             return
         
         # Show server info
         info = client.get_server_info()
-        print(f"📊 Server: {info.get('name')} v{info.get('version')}")
+        print(f"Server: {info.get('name')} v{info.get('version')}")
         
         # List tools
         tools = await client.list_tools()
@@ -255,24 +255,24 @@ async def demo():
         print("   • Getting trending stocks...")
         trending = await client.get_trending_stocks()
         if trending:
-            print("     ✅ Success")
+            print("     Success")
         
         # Stock data
         print("   • Getting Reliance stock data...")
         stock_data = await client.get_stock_data("Reliance")
         if stock_data:
-            print("     ✅ Success")
+            print("     Success")
         
         # NSE active stocks
         print("   • Getting NSE most active...")
         nse_active = await client.get_nse_most_active()
         if nse_active:
-            print("     ✅ Success")
+            print("     Success")
         
         print("\n✨ Demo completed!")
         
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
     
     finally:
         await client.close()

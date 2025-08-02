@@ -52,10 +52,10 @@ def test_serialization():
     extra_fields = actual_fields - expected_fields
     
     if extra_fields:
-        print(f"\n❌ Extra fields found: {extra_fields}")
+        print(f"\nExtra fields found: {extra_fields}")
         print("   These might be confusing Cursor!")
     else:
-        print("\n✅ Tool serialization looks correct")
+        print("\nTool serialization looks correct")
 
 if __name__ == "__main__":
     test_serialization() 

@@ -42,14 +42,14 @@ async def basic_example():
                 print(f"     • {stock['company_name']}: {stock['percent_change']}%")
         
         # Get specific stock data
-        print("\n📊 Stock Data for Reliance:")
+        print("\nStock Data for Reliance:")
         stock_data = await client.get_stock_data("Reliance")
         if stock_data:
             # Parse and display key info (simplified)
-            print("     ✅ Stock data retrieved successfully")
+            print("     Stock data retrieved successfully")
         
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
     
     finally:
         await client.close()
@@ -84,10 +84,10 @@ async def market_overview_example():
         print("\n🏔️ 52-Week High/Low Data:")
         high_low = await client.get_52_week_high_low()
         if high_low:
-            print("     ✅ 52-week data retrieved")
+            print("     52-week data retrieved")
         
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
     
     finally:
         await client.close()
@@ -119,7 +119,7 @@ async def industry_analysis_example():
                 print(f"   {i}. {company['commonName']} - {company['mgIndustry']}")
         
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
     
     finally:
         await client.close()
@@ -135,7 +135,7 @@ async def mutual_funds_example():
         await client.connect()
         
         # Search equity mutual funds
-        print("\n📊 Equity Mutual Funds:")
+        print("\nEquity Mutual Funds:")
         equity_funds = await client.search_mutual_funds("equity")
         if equity_funds:
             data = json.loads(equity_funds)
@@ -146,17 +146,17 @@ async def mutual_funds_example():
         print("\n📈 Latest Mutual Fund Data:")
         latest_funds = await client.get_mutual_funds()
         if latest_funds:
-            print("     ✅ Latest mutual fund data retrieved")
+            print("     Latest mutual fund data retrieved")
         
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
     
     finally:
         await client.close()
 
 async def historical_analysis_example():
     """Historical analysis example"""
-    print("📚 Historical Analysis Example")
+    print("Historical Analysis Example")
     print("=" * 35)
     
     client = ISEMCPClient()
@@ -165,10 +165,10 @@ async def historical_analysis_example():
         await client.connect()
         
         # Get historical data for TCS
-        print("\n📊 TCS Historical Data (1 Year):")
+        print("\nTCS Historical Data (1 Year):")
         tcs_history = await client.get_historical_data("TCS", "1yr", "price")
         if tcs_history:
-            print("     ✅ Historical price data retrieved")
+            print("     Historical price data retrieved")
         
         # Get quarterly results for TCS
         print("\n📈 TCS Quarterly Results:")
@@ -183,7 +183,7 @@ async def historical_analysis_example():
                     print(f"       {quarter}: ₹{sales[quarter]} Cr")
         
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
     
     finally:
         await client.close()
@@ -210,10 +210,10 @@ async def generic_client_example():
         print(f"\n🔧 Manual Tool Call:")
         result = await client.call_tool("get_trending_stocks")
         if result:
-            print("     ✅ Tool call successful")
+            print("     Tool call successful")
         
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
     
     finally:
         await client.close()
@@ -265,7 +265,7 @@ async def main():
     except KeyboardInterrupt:
         print("\n\n👋 Goodbye!")
     except Exception as e:
-        print(f"\n❌ Error: {e}")
+        print(f"\nError: {e}")
 
 if __name__ == "__main__":
     asyncio.run(main()) 

@@ -81,11 +81,11 @@ async def test_vscode_style_connection():
                 
                 if response.status == 200:
                     result = await response.json()
-                    print(f"   ✅ Initialize Success!")
+                    print(f"   Initialize Success!")
                     print(f"   Server: {result.get('result', {}).get('serverInfo', {})}")
                 else:
                     text = await response.text()
-                    print(f"   ❌ Initialize Failed: {text}")
+                    print(f"   Initialize Failed: {text}")
             
             # Test 4: Tools list
             print("\n4. Testing tools/list...")
@@ -109,23 +109,23 @@ async def test_vscode_style_connection():
                 if response.status == 200:
                     result = await response.json()
                     tools = result.get('result', {}).get('tools', [])
-                    print(f"   ✅ Found {len(tools)} tools!")
+                    print(f"   Found {len(tools)} tools!")
                     if tools:
                         print(f"   First tool: {tools[0].get('name')}")
                 else:
                     text = await response.text()
-                    print(f"   ❌ Tools Failed: {text}")
+                    print(f"   Tools Failed: {text}")
             
             print(f"\n🎉 VSCode-style connection test completed!")
             
         except aiohttp.ClientConnectorError as e:
-            print(f"❌ Connection Error: {e}")
+            print(f"Connection Error: {e}")
             print("   This matches the 'fetch failed' error VSCode is seeing")
         except asyncio.TimeoutError:
-            print(f"❌ Timeout Error")
+            print(f"Timeout Error")
             print("   Server might be too slow to respond")
         except Exception as e:
-            print(f"❌ Unexpected Error: {e}")
+            print(f"Unexpected Error: {e}")
 
 if __name__ == "__main__":
     asyncio.run(test_vscode_style_connection()) 

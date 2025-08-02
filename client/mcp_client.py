@@ -357,7 +357,7 @@ async def create_stdio_client(command: str, args: Optional[List[str]] = None, en
 
 async def demo_http_client(url: str = "http://localhost:8000/jsonrpc"):
     """Demo HTTP MCP client with Indian Stock Exchange server"""
-    print("🔌 Connecting to Indian Stock Exchange MCP Server...")
+    print("Connecting to Indian Stock Exchange MCP Server...")
     print("=" * 50)
     
     try:
@@ -366,7 +366,7 @@ async def demo_http_client(url: str = "http://localhost:8000/jsonrpc"):
         
         # Get server info
         info = client.get_server_info()
-        print(f"📊 Connected to: {info.get('name', 'Unknown')} v{info.get('version', 'Unknown')}")
+        print(f"Connected to: {info.get('name', 'Unknown')} v{info.get('version', 'Unknown')}")
         
         # List tools
         tools = await client.list_tools()
@@ -383,19 +383,19 @@ async def demo_http_client(url: str = "http://localhost:8000/jsonrpc"):
         print("   1. Getting trending stocks...")
         result = await client.call_tool("get_trending_stocks")
         if result:
-            print("      ✅ Success! (Data received)")
+            print("      Success! (Data received)")
         
         # Search for a stock
         print("   2. Searching for Reliance stock...")
         result = await client.call_tool("get_stock_data", {"name": "Reliance"})
         if result:
-            print("      ✅ Success! (Stock data received)")
+            print("      Success! (Stock data received)")
         
         # Get NSE most active
         print("   3. Getting NSE most active stocks...")
         result = await client.call_tool("get_nse_most_active")
         if result:
-            print("      ✅ Success! (NSE data received)")
+            print("      Success! (NSE data received)")
         
         print(f"\n🎉 Demo completed successfully!")
         
@@ -403,7 +403,7 @@ async def demo_http_client(url: str = "http://localhost:8000/jsonrpc"):
         await client.close()
         
     except Exception as e:
-        print(f"❌ Demo failed: {e}")
+        print(f"Demo failed: {e}")
 
 if __name__ == "__main__":
     # Run demo
